@@ -1,0 +1,8 @@
+URL_TO_CRAWL = ""
+DOMAIN_NAME = ""
+CHROMEDRIVER_PATH = "/usr/local/bin/chromedriver"
+XPATH_SELECTOR = "//a[@href]"
+ATTRIBUTE_TO_EXTRACT = "href"
+DISALLOWED_PREFIX = "mail"
+TAB_CHARACTER = "\t"
+ERROR_MESSAGE_CRAWLING = "Unexpected error occurred while crawling website "
