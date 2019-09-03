@@ -9,6 +9,8 @@ site_map = dict()
 
 options = Options()
 options.headless = True
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 driver = webdriver.Chrome(executable_path=config.CHROMEDRIVER_PATH, options=options)
 
 
@@ -25,12 +27,16 @@ def crawl_link(link):
         temp_link = str(a_tag.get_attribute(config.ATTRIBUTE_TO_EXTRACT))
         if config.DOMAIN_NAME in temp_link and temp_link not in scraped_links and not temp_link.startswith(config.DISALLOWED_PREFIX):
             scraped_links.append(temp_link)
-            print(config.TAB_CHARACTER + temp_link)
         else:
             pass
 
     crawled_links.append(link)
     site_map[link] = scraped_links
+
+    scraped_links.sort()
+    
+    for sorted_link in scraped_links:
+        print(config.TAB_CHARACTER + sorted_link)
 
     for scraped_link in scraped_links:
         if scraped_link not in crawled_links:
@@ -39,7 +45,9 @@ def crawl_link(link):
 
 try:
     crawl_link(config.URL_TO_CRAWL)
+    crawled_links.sort()
     print(crawled_links)
+    print("Number of crawled links: " + str(len(crawled_links)))
     # print(site_map)
 except:
     print(config.ERROR_MESSAGE_CRAWLING + sys.exc_info()[0])
