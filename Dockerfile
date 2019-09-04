@@ -1,22 +1,18 @@
-FROM python:3.7-slim-buster
+FROM alpine:latest
 
-RUN  apt-get -y update \
-  && apt-get install -y --no-install-recommends gnupg2 wget curl \
-  && rm -rf /var/lib/apt/lists/* 
+RUN echo "http://dl-4.alpinelinux.org/alpine/v3.4/main" >> /etc/apk/repositories && \
+	echo "http://dl-4.alpinelinux.org/alpine/v3.4/community" >> /etc/apk/repositories
 
-# install google chrome
-RUN wget --no-check-certificate -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-RUN apt-get -y update
-RUN apt-get install -y --no-install-recommends google-chrome-stable
+RUN apk update && \
+	apk add --no-cache chromium chromium-chromedriver
 
-# install chromedriver
-RUN apt-get install -yqq unzip
-RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
-RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --no-cache --upgrade pip setuptools wheel 
 
 ADD . /
 
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 CMD [ "python3", "-u", "./app.py" ]
